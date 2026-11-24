@@ -41,3 +41,9 @@ npm start
 ```
 
 Abra `http://localhost:3000`. Para testar links de e-mail localmente, inclua `http://localhost:3000/?senha=1` na lista de redirecionamento do Supabase.
+
+## Dados da versão anterior
+
+Crie as contas por convite. Em cada perfil do HTML antigo, use **Exportar backup**. Importe esse JSON na conta correspondente da versão online e aguarde a confirmação de sincronização. A importação substitui os registros do perfil de destino. As senhas passam a ser definidas no Supabase Auth.
+
+Os registros da interface são salvos como um documento JSON privado por conta, com revisão para evitar sobrescrita entre dispositivos. O limite é de 8 MiB por perfil, incluindo fotos JPG compactadas. Em caso de conflito de edição, exporte um backup das alterações locais antes de recarregar. A função de apagar dados da interface limpa o perfil, e a exclusão administrativa também remove a conta Auth.
