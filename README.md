@@ -1,12 +1,14 @@
 # Fitness Pro
 
-Aplicação web em português. O Render serve a interface e as rotas administrativas em Node.js 24. O Supabase autentica as contas e guarda o estado de cada perfil. O acesso é por e-mail e senha. O Administrador Master gerencia contas por convite.
+Aplicação web em português. O Render serve a interface e as rotas administrativas em Node.js 24. O Supabase autentica as contas e guarda o estado de cada perfil. O acesso é por e-mail e senha. O Administrador Master gerencia contas por convite e aprova solicitações públicas de cadastro. Novos visitantes podem solicitar acesso na tela inicial; o acesso só é liberado após aprovação do Master e envio do convite por e-mail.
 
 ## 1. Configurar o Supabase
 
 1. Crie ou selecione o projeto e mantenha a Data API habilitada. No SQL Editor, execute os arquivos em ordem:
    - `supabase/migrations/001_initial_schema.sql` para um projeto que ainda não recebeu o esquema original.
-   - `supabase/migrations/002_online_fitness_state.sql` para adicionar a integração online. Execute cada migração uma vez.
+   - `supabase/migrations/002_online_fitness_state.sql` para adicionar a integração online.
+   - `supabase/migrations/003_registration_requests.sql` para habilitar solicitações públicas de cadastro na versão 6.8.
+   Execute cada migração uma única vez. Como o banco atual já recebeu as migrações 001 e 002, execute somente a 003 nesta atualização.
 2. Em Authentication, habilite o provedor Email, configure uma senha mínima de 10 caracteres e desabilite o cadastro público se o acesso for apenas por convite.
 3. Configure SMTP próprio no Supabase para enviar convites e links de recuperação aos usuários. Use os templates padrão de Invite e Reset Password, com `{{ .ConfirmationURL }}`. Desative rastreamento de cliques no provedor SMTP se ele reescrever links de autenticação.
 4. Em Authentication → Users, crie a primeira conta e confirme o e-mail. Depois, no SQL Editor, substitua o e-mail abaixo pelo da conta administrativa e confirme que a consulta retornou o ID esperado.
@@ -30,6 +32,12 @@ returning user_id;
 4. Abra `/health` na URL do serviço e confira `{"ok":true}`. Entre com a conta Master, convide uma conta de teste e confirme o recebimento do convite. Defina a senha, registre uma refeição e confira o mesmo registro em outro navegador. Teste a recuperação de senha e a exclusão dessa conta de teste pela tela Master.
 
 [Blueprints do Render](https://render.com/docs/blueprint-spec) · [Chaves do Supabase](https://supabase.com/docs/guides/getting-started/api-keys) · [URLs de redirecionamento](https://supabase.com/docs/guides/auth/redirect-urls)
+
+## Fitness Pro 6.8 — solicitação de cadastro
+
+A tela inicial ganhou um formulário público de solicitação de acesso. O visitante informa nome, e-mail e área de treino (masculina ou feminina). A solicitação fica pendente; não cria usuário nem libera login automaticamente. O Master visualiza a fila em **Dados → Gerenciar usuários → Solicitações de cadastro** e usa **Aprovar e enviar convite**. A conta só é criada pelo fluxo de convite do Supabase Auth.
+
+A tabela `public.registration_requests` é acessível somente pelo servidor com a chave secreta. A rota pública aplica validação de campos e limite básico de solicitações por IP.
 
 ## Executar localmente
 
